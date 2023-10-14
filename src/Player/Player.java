@@ -1,4 +1,7 @@
 package Player;
+import java.util.ArrayList;
+import java.util.List;
+
 import Tile.Tile;
 
 public class Player {
@@ -6,7 +9,8 @@ public class Player {
     private int score;
     private int position;
     private int resources;
-    
+    private List<Tile> tilesOwned = new ArrayList<>();
+
     public Player(String name) {
         this.name = name;
         this.score = 0;
@@ -41,6 +45,9 @@ public int getResources() {
     }
     public void setResources(int resources) {
         this.resources = resources;
+    }
+     public List<Tile> getTilesOwned() {
+        return tilesOwned;
     }
 public void buyTile(Tile tile) {
         if (resources >= tile.getPrice()) {
