@@ -256,7 +256,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                     // If the offer partner exists and the current player owns the tile they want to offer
                     if (offer_Tile != null) {
                         // Ask the offer partner if they want to buy the tile
-                        int response = JOptionPane.showConfirmDialog(null, "Do you want to buy tile " + currentTile.getPosition() + " for " + currentTile.getPrice() + " resources?", "Buy Tile", JOptionPane.YES_NO_OPTION);
+                        int response = JOptionPane.showConfirmDialog(null, "Do you want to buy tile " + currentTile.getName() + " for " + currentTile.getPrice() + " resources?", "Buy Tile", JOptionPane.YES_NO_OPTION);
                         if (response == JOptionPane.YES_OPTION) {
                             offer_Tile.buyTile(currentTile);
                             System.out.println(offer_Tile.getName() + " has bought " + currentTile.getName() );
