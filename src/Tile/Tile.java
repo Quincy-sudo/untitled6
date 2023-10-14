@@ -1,8 +1,8 @@
 package Tile;
 
 public class Tile {
-    private int position;
-    private TileType type;
+    private final int position;
+    private final TileType type;
 
     public Tile(int position, TileType type) {
         this.position = position;

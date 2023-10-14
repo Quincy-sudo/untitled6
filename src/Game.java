@@ -28,6 +28,7 @@ public class Game extends JFrame {
     private final JLabel seconds_left = new JLabel();
     private final HashSet<String> usedNames = new HashSet<>();
     private final JButton endTurnButton = new JButton();
+private final List<JLabel> playerScoreLabels = new ArrayList<>();
     // Custom OutputStream that appends text to the textfield
     private static class TextAreaOutputStream extends OutputStream {
         private final JTextArea textArea;
@@ -112,8 +113,9 @@ public class Game extends JFrame {
             }
         }
 
-
         for (int i = 0; i < numPlayers; i++) {
+            
+            final int finalI = i; // Create a final copy of i
             String playerName = "Player " + (i + 1);
             players.add(new Player(playerName)); // Use add() method to add a new player
             JButton playerButton = new JButton();
@@ -121,20 +123,24 @@ public class Game extends JFrame {
             playerButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
             playerButton.setFocusable(false);
             playerButton.setText(playerName);
+            JLabel scoreLabel = new JLabel("Score: 0\n");
+            playerScoreLabels.add(scoreLabel);
+            playerButton.addActionListener(e -> {playerScoreLabels.add(scoreLabel);
+         JLabel resourceLabel = new JLabel("Resources: " + players.get(finalI).getResources());
+            playerScoreLabels.add(resourceLabel);
+                // Create a new JFrame to display the player's score and resources
+                JFrame scoreFrame = new JFrame("Score and Resources");
+                scoreFrame.setSize(200, 200);
+                scoreFrame.setLayout(new BoxLayout(scoreFrame.getContentPane(), BoxLayout.Y_AXIS)); // Set layout to BoxLayout to arrange labels vertically
+                scoreFrame.add(scoreLabel);
+                scoreFrame.add(resourceLabel);
+                scoreFrame.setVisible(true);
+            });
             playerButtons.add(playerButton); // Use add() method to add the button to the list
             frame.add(playerButton);
         }
-        ArrayList<JLabel> playerScoreLabels = new ArrayList<>();
-        for (int i = 0; i < numPlayers; i++) {
-            JLabel playerScoreLabel = new JLabel();
-            playerScoreLabel.setBounds(0, 150 + (i * 100), 98, 50);
-            playerScoreLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
-            playerScoreLabel.setForeground(new Color(255, 255, 255)); // Set color to white
-            playerScoreLabel.setText(" Score: " + players.get(i).getScore());
-            playerScoreLabels.add(playerScoreLabel);
-            frame.add(playerScoreLabel);
-        }
 
+        
         seconds_left.setBounds(535,510,100,100);
         seconds_left.setBackground(new Color(25,25,25));
         seconds_left.setForeground(new Color(255,0,0));
@@ -175,6 +181,9 @@ public class Game extends JFrame {
                     if (newPosition < 0) {
                         newPosition = gameBoard.size() + newPosition;
                     }
+                    // Add resources to the player when they pass the start tile
+                    players.get(currentPlayer - 1).setResources(players.get(currentPlayer - 1).getResources() + 200); // Add 200 resources
+                    System.out.println(players.get(currentPlayer - 1).getName() + "'s resources increased to " + players.get(currentPlayer - 1).getResources());
                 }
 
                 players.get(currentPlayer - 1).setPosition(newPosition);
