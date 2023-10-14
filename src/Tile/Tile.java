@@ -8,6 +8,8 @@ public class Tile {
     private final int price;
     private Player owner;
     private String Name;
+ private boolean isOffered = false;
+
 
     public Tile(String Name, int position, TileType type, int price) {
         this.position = position;
@@ -38,5 +40,12 @@ public class Tile {
 
     public void setOwner(Player owner) {
         this.owner = owner;
+    }
+    public boolean isOffered() {
+        return isOffered;
+    }
+
+    public void setOffered(boolean offered) {
+        isOffered = offered;
     }
 }
