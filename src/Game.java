@@ -29,6 +29,7 @@ public class Game extends JFrame {
     private final HashSet<String> usedNames = new HashSet<>();
     private final JButton endTurnButton = new JButton();
 private final List<JLabel> playerScoreLabels = new ArrayList<>();
+
     // Custom OutputStream that appends text to the textfield
     private static class TextAreaOutputStream extends OutputStream {
         private final JTextArea textArea;
