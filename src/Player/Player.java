@@ -1,10 +1,12 @@
 package Player;
+import Tile.Tile;
 
 public class Player {
     private String name;
     private int score;
     private int position;
- private int resources;
+    private int resources;
+    
     public Player(String name) {
         this.name = name;
         this.score = 0;
@@ -39,5 +41,13 @@ public int getResources() {
     }
     public void setResources(int resources) {
         this.resources = resources;
+    }
+public void buyTile(Tile tile) {
+        if (resources >= tile.getPrice()) {
+            resources -= tile.getPrice();
+            tile.setOwner(this);
+        } else {
+            System.out.println("You don't have enough resources to buy this tile.");
+        }
     }
 }

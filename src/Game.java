@@ -47,24 +47,24 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
             textArea.setCaretPosition(textArea.getDocument().getLength()); // Scroll to the bottom
         }
     }
-
+  
     public Game() {
         gameBoard = new ArrayList<>();
 
         // Create and add tiles to the game board
-        gameBoard.add(new Tile(0, TileType.START));
-        gameBoard.add(new Tile(1, TileType.SPECIAL));
-        gameBoard.add(new Tile(2, TileType.NORMAL));
-        gameBoard.add(new Tile(3, TileType.NORMAL));
-        gameBoard.add(new Tile(4, TileType.NORMAL));
-        gameBoard.add(new Tile(5, TileType.NORMAL));
-        gameBoard.add(new Tile(6, TileType.NORMAL));
-        gameBoard.add(new Tile(7, TileType.NORMAL));
-        gameBoard.add(new Tile(8, TileType.NORMAL));
-        gameBoard.add(new Tile(9, TileType.NORMAL));
-        gameBoard.add(new Tile(10, TileType.NORMAL));
-        gameBoard.add(new Tile(11, TileType.SPECIAL));
-        gameBoard.add(new Tile(12, TileType.SPECIAL));
+        gameBoard.add(new Tile(0, TileType.START, 50));
+        gameBoard.add(new Tile(1, TileType.SPECIAL,100));
+        gameBoard.add(new Tile(2, TileType.NORMAL,111));
+        gameBoard.add(new Tile(3, TileType.NORMAL,100));
+        gameBoard.add(new Tile(4, TileType.NORMAL,100));
+        gameBoard.add(new Tile(5, TileType.NORMAL,100));
+        gameBoard.add(new Tile(6, TileType.NORMAL,100));
+        gameBoard.add(new Tile(7, TileType.NORMAL,100));
+        gameBoard.add(new Tile(8, TileType.NORMAL,100));
+        gameBoard.add(new Tile(9, TileType.NORMAL,100));
+        gameBoard.add(new Tile(10, TileType.NORMAL,100));
+        gameBoard.add(new Tile(11, TileType.SPECIAL,100));
+        gameBoard.add(new Tile(12, TileType.SPECIAL,100));
         for (int i = 0; i < players.size(); i++) {
             String playerName = "Player " + (i + 1);
             Player player = new Player(playerName);
@@ -123,10 +123,11 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
             playerButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
             playerButton.setFocusable(false);
             playerButton.setText(playerName);
-            JLabel scoreLabel = new JLabel("Score: 0\n");
+            JLabel scoreLabel = new JLabel("Score: 0: ");
             playerScoreLabels.add(scoreLabel);
-            playerButton.addActionListener(e -> {playerScoreLabels.add(scoreLabel);
-         JLabel resourceLabel = new JLabel("Resources: " + players.get(finalI).getResources());
+            playerButton.addActionListener(e -> {
+            playerScoreLabels.add(scoreLabel); 
+            JLabel resourceLabel = new JLabel("Resources: " + players.get(finalI).getResources());
             playerScoreLabels.add(resourceLabel);
                 // Create a new JFrame to display the player's score and resources
                 JFrame scoreFrame = new JFrame("Score and Resources");
@@ -182,7 +183,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                         newPosition = gameBoard.size() + newPosition;
                     }
                     // Add resources to the player when they pass the start tile
-                    players.get(currentPlayer - 1).setResources(players.get(currentPlayer - 1).getResources() + 200); // Add 200 resources
+                    players.get(currentPlayer - 1).setResources(players.get(currentPlayer - 1).getResources() + 250); // Add 200 resources
                     System.out.println(players.get(currentPlayer - 1).getName() + "'s resources increased to " + players.get(currentPlayer - 1).getResources());
                 }
 
@@ -203,6 +204,13 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                     // Update the player's score label
                     playerScoreLabels.get(currentPlayer - 1).setText(" Score: " + players.get(currentPlayer - 1).getScore());
 
+                } else if (currentTile.getOwner() == null && currentTile.getType() != TileType.START && currentTile.getType() != TileType.SPECIAL) {
+                    // Ask the player if they want to buy the tile
+                    int response = JOptionPane.showConfirmDialog(null, "Do you want to buy this tile for " + currentTile.getPrice() + " resources?", "Buy Tile", JOptionPane.YES_NO_OPTION);
+                    if (response == JOptionPane.YES_OPTION) {
+                        players.get(currentPlayer - 1).buyTile(currentTile);
+                        System.out.println("nice");
+                    }
                 }
                 dice_button.setEnabled(false);
 
@@ -217,7 +225,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         actionsButton.setEnabled(false);
         actionsButton.setText("Actions");
         actionsButton.addActionListener(a -> {
-            String[] options = {"Option 1", "Option 2", "Option 3", "Option 4", "Option 5"};
+            String[] options = {"Buy Tile", "Option 2", "Option 3", "Option 4", "Option 5"};
             String selectedOption = (String) JOptionPane.showInputDialog(
                     frame,
                     playerButtons.get(currentPlayer - 1).getText() + ", choose an action:",
@@ -227,9 +235,29 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                     options,
                     options[0]
             );
-            // Handle the selected option
+           Tile currentTile = gameBoard.get(players.get(currentPlayer - 1).getPosition());
             if (selectedOption != null) {
                 System.out.println(playerButtons.get(currentPlayer - 1).getText() + " You selected: " + selectedOption);
+                if (selectedOption.equals("Buy Tile")) {
+                    // Check if the tile is a start or special tile
+                    if (currentTile.getType() == TileType.START || currentTile.getType() == TileType.SPECIAL) {
+                        System.out.println("You cannot buy the start or special tiles.");
+                    } else if (currentTile.getOwner() != null) {
+                        // Check if the tile is already owned by another player
+                        JOptionPane.showMessageDialog(null, "This tile is already owned by Player " + currentTile.getOwner().getName(), "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Check if the player has enough resources to buy the tile
+                        if (players.get(currentPlayer - 1).getResources() >= currentTile.getCost()) {
+                            // Deduct the cost of the tile from the player's resources
+                            players.get(currentPlayer - 1).setResources(players.get(currentPlayer - 1).getResources() - currentTile.getCost());
+                            // Change the owner of the tile to the current player
+                            currentTile.setOwner(players.get(currentPlayer - 1));
+                            System.out.println(players.get(currentPlayer - 1).getName() + " bought tile " + currentTile.getPosition());
+                        } else {
+                            System.out.println("You do not have enough resources to buy this tile.");
+                        }
+                    }
+                }
             }
         });
 
