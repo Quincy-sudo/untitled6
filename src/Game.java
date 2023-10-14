@@ -52,19 +52,19 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         gameBoard = new ArrayList<>();
 
         // Create and add tiles to the game board
-        gameBoard.add(new Tile(0, TileType.START, 50));
-        gameBoard.add(new Tile(1, TileType.SPECIAL,100));
-        gameBoard.add(new Tile(2, TileType.NORMAL,111));
-        gameBoard.add(new Tile(3, TileType.NORMAL,100));
-        gameBoard.add(new Tile(4, TileType.NORMAL,100));
-        gameBoard.add(new Tile(5, TileType.NORMAL,100));
-        gameBoard.add(new Tile(6, TileType.NORMAL,100));
-        gameBoard.add(new Tile(7, TileType.NORMAL,100));
-        gameBoard.add(new Tile(8, TileType.NORMAL,100));
-        gameBoard.add(new Tile(9, TileType.NORMAL,100));
-        gameBoard.add(new Tile(10, TileType.NORMAL,100));
-        gameBoard.add(new Tile(11, TileType.SPECIAL,100));
-        gameBoard.add(new Tile(12, TileType.SPECIAL,100));
+        gameBoard.add(new Tile("poop0",0, TileType.START, 50));
+        gameBoard.add(new Tile("poop1", 1, TileType.SPECIAL,100));
+        gameBoard.add(new Tile("poop2",2, TileType.NORMAL,111));
+        gameBoard.add(new Tile("poop3",3, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop4",4, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop5",5, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop6",6, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop7",7, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop8",8, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop9",9, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop10",10, TileType.NORMAL,100));
+        gameBoard.add(new Tile("poop11",11, TileType.SPECIAL,100));
+        gameBoard.add(new Tile("poop12",12, TileType.SPECIAL,100));
         for (int i = 0; i < players.size(); i++) {
             String playerName = "Player " + (i + 1);
             Player player = new Player(playerName);
@@ -194,7 +194,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                 Tile currentTile = gameBoard.get(newPosition);
 
                 // Output the tile information
-                System.out.println(players.get(currentPlayer - 1).getName() + " landed on tile " + currentTile.getPosition() + " - " + currentTile.getType());
+                System.out.println(players.get(currentPlayer - 1).getName() + " landed on " + currentTile.getName() + " - " + currentTile.getType());
 
                 // Check if the current tile is a special tile
                 if (currentTile.getType() == TileType.SPECIAL) {
@@ -207,10 +207,10 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
 
                 } else if (currentTile.getOwner() == null && currentTile.getType() != TileType.START && currentTile.getType() != TileType.SPECIAL) {
                     // Ask the player if they want to buy the tile
-                    int response = JOptionPane.showConfirmDialog(null, "Do you want to buy this tile for " + currentTile.getPrice() + " resources?", "Buy Tile", JOptionPane.YES_NO_OPTION);
+                    int response = JOptionPane.showConfirmDialog(null, "Do you want to buy tile " + currentTile.getPosition() + " for " + currentTile.getPrice() + " resources?", "Buy Tile", JOptionPane.YES_NO_OPTION);
                     if (response == JOptionPane.YES_OPTION) {
                         players.get(currentPlayer - 1).buyTile(currentTile);
-                        System.out.println("nice");
+                        System.out.println("you have bought " + currentTile.getName() );
                     }
                 }
                 dice_button.setEnabled(false);
@@ -226,37 +226,45 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         actionsButton.setEnabled(false);
         actionsButton.setText("Actions");
         actionsButton.addActionListener(a -> {
-            String[] options = {"Buy Tile", "Option 2", "Option 3", "Option 4", "Option 5"};
-            String selectedOption = (String) JOptionPane.showInputDialog(
-                    frame,
-                    playerButtons.get(currentPlayer - 1).getText() + ", choose an action:",
-                    "Action Selection - " + currentPlayer,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[0]
-            );
-           Tile currentTile = gameBoard.get(players.get(currentPlayer - 1).getPosition());
+    String[] options = {"Buy Tile", "Trade Tile", "Offer Tile", "Option 4", "Option 5"};
+    String selectedOption = (String) JOptionPane.showInputDialog(
+            frame,
+            playerButtons.get(currentPlayer - 1).getText() + ", choose an action:",
+            "Action Selection - " + currentPlayer,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]
+    );
+            Tile currentTile = gameBoard.get(players.get(currentPlayer - 1).getPosition());
             if (selectedOption != null) {
                 System.out.println(playerButtons.get(currentPlayer - 1).getText() + " You selected: " + selectedOption);
-                if (selectedOption.equals("Buy Tile")) {
-                    // Check if the tile is a start or special tile
-                    if (currentTile.getType() == TileType.START || currentTile.getType() == TileType.SPECIAL) {
-                        System.out.println("You cannot buy the start or special tiles.");
-                    } else if (currentTile.getOwner() != null) {
-                        // Check if the tile is already owned by another player
-                        JOptionPane.showMessageDialog(null, "This tile is already owned by Player " + currentTile.getOwner().getName(), "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        // Check if the player has enough resources to buy the tile
-                        if (players.get(currentPlayer - 1).getResources() >= currentTile.getPrice()) {
-                            // Deduct the cost of the tile from the player's resources
-                            players.get(currentPlayer - 1).setResources(players.get(currentPlayer - 1).getResources() - currentTile.getPrice());
-                            // Change the owner of the tile to the current player
-                            currentTile.setOwner(players.get(currentPlayer - 1));
-                            System.out.println(players.get(currentPlayer - 1).getName() + " bought tile " + currentTile.getPosition());
+                // Other options...
+                if (selectedOption.equals("Offer Tile")) {
+                    // Ask the player who they want to offer the tile to
+                    String playerToOfferTo = (String) JOptionPane.showInputDialog(
+                            frame,
+                            "Enter the name of the player you want to offer the tile to:",
+                            "Tile Offering - " + currentPlayer,
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+                    // Find the player object for the player to offer to
+                    Player offer_Tile = players.stream()
+                            .filter(player -> player.getName().equals(playerToOfferTo))
+                            .findFirst()
+                            .orElse(null);
+                    // If the offer partner exists and the current player owns the tile they want to offer
+                    if (offer_Tile != null) {
+                        // Ask the offer partner if they want to buy the tile
+                        int response = JOptionPane.showConfirmDialog(null, "Do you want to buy tile " + currentTile.getPosition() + " for " + currentTile.getPrice() + " resources?", "Buy Tile", JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            offer_Tile.buyTile(currentTile);
+                            System.out.println(offer_Tile.getName() + " has bought " + currentTile.getName() );
                         } else {
-                            System.out.println("You do not have enough resources to buy this tile.");
+                            System.out.println(offer_Tile.getName() + " declined to buy " + currentTile.getName() );
                         }
+                    } else {
+                        System.out.println("Offer failed. Check if the tile and player you want to offer to exist and you own the tile.");
                     }
                 }
             }
