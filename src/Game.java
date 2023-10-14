@@ -247,9 +247,9 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                         JOptionPane.showMessageDialog(null, "This tile is already owned by Player " + currentTile.getOwner().getName(), "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         // Check if the player has enough resources to buy the tile
-                        if (players.get(currentPlayer - 1).getResources() >= currentTile.getCost()) {
+                        if (players.get(currentPlayer - 1).getResources() >= currentTile.getPrice()) {
                             // Deduct the cost of the tile from the player's resources
-                            players.get(currentPlayer - 1).setResources(players.get(currentPlayer - 1).getResources() - currentTile.getCost());
+                            players.get(currentPlayer - 1).setResources(players.get(currentPlayer - 1).getResources() - currentTile.getPrice());
                             // Change the owner of the tile to the current player
                             currentTile.setOwner(players.get(currentPlayer - 1));
                             System.out.println(players.get(currentPlayer - 1).getName() + " bought tile " + currentTile.getPosition());

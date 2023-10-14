@@ -7,7 +7,7 @@ public class Tile {
     private final TileType type;
     private final int price;
     private Player owner;
-   private int cost;
+
 
     public Tile(int position, TileType type, int price) {
         this.position = position;
@@ -26,9 +26,7 @@ public class Tile {
  public int getPrice() {
         return price;
     }
- public int getCost() {
-        return this.cost;
-    }
+
     public Player getOwner() {
         return owner;
     }
