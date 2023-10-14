@@ -9,7 +9,7 @@ import Tile.Tile;
 import Dice.Dice;
 import Tile.TileType;
 import java.util.List;
-
+import java.util.stream.Collectors;
 public class Game extends JFrame {
 
     Dice dice = new Dice();
@@ -101,7 +101,10 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
 
         int numPlayers;
         while (true) {
-            String numPlayersStr = JOptionPane.showInputDialog("Enter the number of players (1-4):");
+            String numPlayersStr = JOptionPane.showInputDialog("Enter the number of players (1-4) or type 'exit' to quit:");
+            if ("exit".equalsIgnoreCase(numPlayersStr)) {
+                System.exit(0); // Exit the program if the user types 'exit'
+            }
             try {
                 numPlayers = Integer.parseInt(numPlayersStr);
                 if (numPlayers >= 1 && numPlayers <= 4) {
@@ -348,6 +351,8 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                     offerTo.setResources(offerTo.getResources() - currentTile.getPrice());
                     // Change the owner of the tile to the offerTo player
                     currentTile.setOwner(offerTo);
+                    // Add the tile to the list of tiles owned by the offerTo player
+                    offerTo.getTilesOwned().add(currentTile);
                     System.out.println(offerTo.getName() + " has used their resources to buy the tile " + currentTile.getPosition() + " from " + players.get(currentPlayer - 1).getName());
                 } else {
                     System.out.println(offerTo.getName() + " does not have enough resources to buy this tile.");
@@ -456,6 +461,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
             System.out.println(player.getName() + " - Position: " + player.getPosition());
             System.out.println("Score: " + player.getScore());
             System.out.println("Resources: " + player.getResources());
+            System.out.println("Tiles Owned: " + player.getTilesOwned().stream().map(Tile::getName).collect(Collectors.joining(", ")));
         }
     }
 }
