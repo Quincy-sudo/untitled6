@@ -225,20 +225,21 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         actionsButton.setFocusable(false);
         actionsButton.setEnabled(false);
         actionsButton.setText("Actions");
-        actionsButton.addActionListener(a -> {
-            String[] options = {"Buy Tile", "Trade Tile", "Buy Tile from Player", "Option 4", "Option 5"};
-            String selectedOption = (String) JOptionPane.showInputDialog(
-                    frame,
-                    playerButtons.get(currentPlayer - 1).getText() + ", choose an action:",
-                    "Action Selection - " + currentPlayer,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[0]
-            );
-            Tile currentTile = gameBoard.get(players.get(currentPlayer - 1).getPosition());
-            if (selectedOption != null) {
-                System.out.println(playerButtons.get(currentPlayer - 1).getText() + " You selected: " + selectedOption);
+      actionsButton.addActionListener(a -> {
+    String[] options = {"Buy Tile", "Trade Tile", "Buy Tile from Player", "Offer Current Tile", "Option 5"};
+    String selectedOption = (String) JOptionPane.showInputDialog(
+            frame,
+            playerButtons.get(currentPlayer - 1).getText() + ", choose an action:",
+            "Action Selection - " + currentPlayer,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]
+    );
+    Tile currentTile = gameBoard.get(players.get(currentPlayer - 1).getPosition());
+    if (selectedOption != null) {
+        System.out.println(playerButtons.get(currentPlayer - 1).getText() + " You selected: " + selectedOption);
+        
                 if (selectedOption.equals("Buy Tile")) {
                     // Check if the tile is a start or special tile
                     if (currentTile.getType() == TileType.START || currentTile.getType() == TileType.SPECIAL) {
@@ -324,7 +325,37 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                     } else {
                         System.out.println("Purchase failed. Check if the tile and player you want to buy from exist and the player owns the tile.");
                     }
+                    
                 }
+                 if (selectedOption.equals("Offer Current Tile")) {
+            // Ask the player who they want to offer the tile to
+            String playerToOfferTo = (String) JOptionPane.showInputDialog(
+                    frame,
+                    "Enter the name of the player you want to offer the tile to:",
+                    "Tile Offering - " + currentPlayer,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+            // Find the player object for the player to offer to
+            Player offerTo = players.stream()
+                    .filter(player -> player.getName().equals(playerToOfferTo))
+                    .findFirst()
+                    .orElse(null);
+            // If the offerTo player exists and the current player owns the tile they want to offer
+           if (offerTo != null) {
+                // Check if the player has enough resources to buy the tile
+                if (offerTo.getResources() >= currentTile.getPrice()) {
+                    // Deduct the cost of the tile from the player's resources
+                    offerTo.setResources(offerTo.getResources() - currentTile.getPrice());
+                    // Change the owner of the tile to the offerTo player
+                    currentTile.setOwner(offerTo);
+                    System.out.println(offerTo.getName() + " has used their resources to buy the tile " + currentTile.getPosition() + " from " + players.get(currentPlayer - 1).getName());
+                } else {
+                    System.out.println(offerTo.getName() + " does not have enough resources to buy this tile.");
+                }
+            } else {
+                System.out.println("Offer failed. Check if the tile and player you want to offer to exist and you own the tile.");
+            }
+        }
             }
         });
 
@@ -399,6 +430,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         }
         return name;
     }
+
     private int rollDice() {
         // Generate random numbers between 1 and 6 for two dice
         int dice1 = (int) (Math.random() * 6) + 1;
