@@ -20,7 +20,6 @@ public class Game extends JFrame {
     private boolean turnEnded = true;
     private final JFrame frame = new JFrame();
     private final JButton startGameButton = new JButton();
-    private final JTextArea textfield = new JTextArea();
     private final List<Player> players = new ArrayList<>();
     private final List<JButton> playerButtons = new ArrayList<>();
     private final JButton actionsButton = new JButton();
@@ -85,6 +84,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         titleLabel.setForeground(new Color(255, 255, 255)); // Set color to white
         titleLabel.setText("Game Title");
 
+        JTextArea textfield = new JTextArea();
         textfield.setBounds(100, 100, 620, 400);
         textfield.setBackground(new Color(25, 25, 25));
         textfield.setForeground(new Color(25, 255, 0));
