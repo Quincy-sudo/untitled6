@@ -100,7 +100,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         JScrollPane scrollPane = new JScrollPane(textfield);
         scrollPane.setBounds(100, 100, 540, 400);
 
-        PrintStream printStream = new PrintStream(new TextAreaOutputStream(textfield, 5000));
+        PrintStream printStream = new PrintStream(new TextAreaOutputStream(textfield, 20000));
         System.setOut(printStream);
         System.setErr(printStream);
 
