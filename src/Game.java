@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
-
 public class Game extends JFrame {
 
     Dice dice = new Dice();
@@ -30,7 +29,10 @@ public class Game extends JFrame {
     private final JLabel seconds_left = new JLabel();
     private final HashSet<String> usedNames = new HashSet<>();
     private final JButton endTurnButton = new JButton();
-private final List<JLabel> playerScoreLabels = new ArrayList<>();
+    private final List<JLabel> playerScoreLabels = new ArrayList<>();
+    private final JPanel gameBoardPanel = new JPanel();
+    private final List<JButton> tiles = new ArrayList<>();
+
 
     // Custom OutputStream that appends text to the textfield
     private static class TextAreaOutputStream extends OutputStream {
@@ -68,6 +70,8 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
         gameBoard.add(new Tile("tile10",10, TileType.NORMAL,100));
         gameBoard.add(new Tile("tile11",11, TileType.SPECIAL,100));
         gameBoard.add(new Tile("tile12",12, TileType.SPECIAL,100));
+        gameBoard.add(new Tile("tile13",11, TileType.SPECIAL,100));
+        gameBoard.add(new Tile("tile14",12, TileType.SPECIAL,100));
         for (int i = 0; i < players.size(); i++) {
             String playerName = "Player " + (i + 1);
             Player player = new Player(playerName);
@@ -76,18 +80,46 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                 players.set(i, player);
             }
         }
+         // Set the layout of the game board panel
+         int boardSize = (int) Math.sqrt(gameBoard.size());
+         gameBoardPanel.setLayout(new GridLayout(boardSize, boardSize));
+         gameBoardPanel.setBounds(120, 10, 650, 50);
+         // Loop through each tile in the game board
+         for (Tile tile : gameBoard) {
+             // Create a new button for the tile
+             JButton tileButton = new JButton(tile.getName());
+             // Set the border of the tile button
+             tileButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+             // Check if a player is on the tile
+             for (Player player : players) {
+                 if (player.getPosition() == tile.getPosition()) {
+                     // Change the color of the tile button if a player is on it
+                     tileButton.setBackground(Color.YELLOW);
+                     tileButton.setOpaque(true); // Make sure the color change is visible
+                     tileButton.setBorderPainted(false); // Remove the border to make the color more visible
+                 }
+             }
+             // Add the tile button to the list of tiles
+             tiles.add(tileButton);
+             // Add the tile button to the game board panel
+             gameBoardPanel.add(tileButton);
+         }
+         // Add the game board panel to the frame
+         frame.add(gameBoardPanel);
+      
+    
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(650, 650);
+        frame.setSize(800, 650);
         frame.getContentPane().setBackground(new Color(50, 50, 50));
         frame.setLayout(null);
         frame.setResizable(false);
 
         JLabel titleLabel = new JLabel();
-        titleLabel.setBounds(210, 10, 650, 50);
+        titleLabel.setBounds(175, 10, 650, 50);
         titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 40));
         titleLabel.setForeground(new Color(255, 255, 255)); // Set color to white
-        titleLabel.setText("Game Title");
+        titleLabel.setText("Making It Better");
 
         JTextArea textfield = new JTextArea();
         textfield.setBounds(100, 100, 620, 400);
@@ -121,7 +153,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                 JOptionPane.showMessageDialog(null, "Invalid input. Please enter a number.");
             }
         }
-
+        
         for (int i = 0; i < numPlayers; i++) {
             final int finalI = i; // Create a final copy of i
             String playerName = "Player " + (i + 1);
@@ -131,7 +163,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
             playerButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
             playerButton.setFocusable(false);
             playerButton.setText(playerName);
-            JLabel scoreLabel = new JLabel("Score: 0: ");
+            JLabel scoreLabel = new JLabel("Score: 0 ");
             playerScoreLabels.add(scoreLabel);
             playerButton.addActionListener(e -> {
             playerScoreLabels.add(scoreLabel); 
@@ -196,7 +228,7 @@ private final List<JLabel> playerScoreLabels = new ArrayList<>();
                 }
 
                 players.get(currentPlayer - 1).setPosition(newPosition);
-
+                updateGameBoard();
                 // Find the tile corresponding to the new position
                 Tile currentTile = gameBoard.get(newPosition);
 
@@ -430,6 +462,7 @@ if (!isTileOwned) {
             timer.start(); // Start the timer
             frame.remove(startGameButton);
             frame.add(endTurnButton);
+            
         });
 
         endTurnButton.setBounds(0, 500, 100, 110); // Adjust these values as needed
@@ -444,6 +477,7 @@ if (!isTileOwned) {
             turnEnded = true; // Set turnEnded to true to indicate that the current player's turn has ended
             currentPlayer = (currentPlayer % players.size()) + 1; // Switch to the next player
             dice_button.setEnabled(true);
+            
         });
 
         promptPlayerNames();
@@ -506,4 +540,15 @@ if (!isTileOwned) {
             System.out.println("Tiles Owned: " + player.getTilesOwned().stream().map(Tile::getName).collect(Collectors.joining(", ")));
         }
     }
+    private void updateGameBoard() {
+        for (int i = 0; i < tiles.size(); i++) {
+            tiles.get(i).setText(gameBoard.get(i).getName());
+            for (Player player : players) {
+                if (player.getPosition() == i) {
+                    tiles.get(i).setText(tiles.get(i).getText() + " " + player.getName());
+                }
+            }
+        }
+    }
 }
+
