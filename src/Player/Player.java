@@ -31,9 +31,6 @@ public class Player {
     public void setScore(int score) {
         this.score = score;
     }
-public void increaseScore(int amount) {
-    score += amount;
-}
     public int getPosition() {
         return position;
     }
@@ -53,8 +50,23 @@ public void buyTile(Tile tile) {
         if (resources >= tile.getPrice()) {
             resources -= tile.getPrice();
             tile.setOwner(this);
+            tilesOwned.add(tile);
         } else {
-            System.out.println("You don't have enough resources to buy this tile.");
+            System.out.println("You do not have enough resources to buy this tile.");
         }
+    }
+
+    public void tradeTile(Tile tile, Player tradePartner) {
+        if (tilesOwned.contains(tile)) {
+            tilesOwned.remove(tile);
+            tradePartner.getTilesOwned().add(tile);
+            tile.setOwner(tradePartner);
+        } else {
+            System.out.println("Trade failed. You do not own this tile.");
+        }
+    }
+
+    public void increaseScore(int amount) {
+        score += amount;
     }
 }

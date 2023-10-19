@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import Player.Player;
+import Tile.LoadTileTransaction;
 import Tile.Tile;
 import Dice.Dice;
 import Tile.TileType;
@@ -17,9 +18,8 @@ public class Game extends JFrame {
     Dice dice = new Dice();
     private final java.util.List<Tile> gameBoard;
     private final int diceRoll = dice.roll();
-    private int currentPlayer = 1;
+    private final int currentPlayer = 1;
     private int seconds = 60;
-    private boolean turnEnded = true;
     private final JFrame frame = new JFrame();
     private final JButton startGameButton = new JButton();
     private final List<Player> players = new ArrayList<>();
@@ -54,61 +54,10 @@ public class Game extends JFrame {
     }
   
     public Game() {
-        gameBoard = new ArrayList<>();
+        LoadTileTransaction loadTileTransaction = new LoadTileTransaction();
+        gameBoard = loadTileTransaction.loadTiles();
+     
 
-        // Create and add tiles to the game board
-        gameBoard.add(new Tile("tile0",0, TileType.START, 50));
-        gameBoard.add(new Tile("tile1", 1, TileType.SPECIAL,100));
-        gameBoard.add(new Tile("tile2",2, TileType.NORMAL,111));
-        gameBoard.add(new Tile("tile3",3, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile4",4, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile5",5, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile6",6, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile7",7, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile8",8, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile9",9, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile10",10, TileType.NORMAL,100));
-        gameBoard.add(new Tile("tile11",11, TileType.SPECIAL,100));
-        gameBoard.add(new Tile("tile12",12, TileType.SPECIAL,100));
-        gameBoard.add(new Tile("tile13",11, TileType.SPECIAL,100));
-        gameBoard.add(new Tile("tile14",12, TileType.SPECIAL,100));
-        for (int i = 0; i < players.size(); i++) {
-            String playerName = "Player " + (i + 1);
-            Player player = new Player(playerName);
-            player.setPosition(0); // Set the initial position to 0
-            if (i < players.size()) {
-                players.set(i, player);
-            }
-        }
-         // Set the layout of the game board panel
-         int boardSize = (int) Math.sqrt(gameBoard.size());
-         gameBoardPanel.setLayout(new GridLayout(boardSize, boardSize));
-         gameBoardPanel.setBounds(120, 10, 650, 50);
-         // Loop through each tile in the game board
-         for (Tile tile : gameBoard) {
-             // Create a new button for the tile
-             JButton tileButton = new JButton(tile.getName());
-             // Set the border of the tile button
-             tileButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-             // Check if a player is on the tile
-             for (Player player : players) {
-                 if (player.getPosition() == tile.getPosition()) {
-                     // Change the color of the tile button if a player is on it
-                     tileButton.setBackground(Color.YELLOW);
-                     tileButton.setOpaque(true); // Make sure the color change is visible
-                     tileButton.setBorderPainted(false); // Remove the border to make the color more visible
-                 }
-             }
-             // Add the tile button to the list of tiles
-             tiles.add(tileButton);
-             // Add the tile button to the game board panel
-             gameBoardPanel.add(tileButton);
-         }
-         // Add the game board panel to the frame
-         frame.add(gameBoardPanel);
-      
-    
-        
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 650);
         frame.getContentPane().setBackground(new Color(50, 50, 50));
@@ -152,8 +101,8 @@ public class Game extends JFrame {
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Invalid input. Please enter a number.");
             }
+
         }
-        
         for (int i = 0; i < numPlayers; i++) {
             final int finalI = i; // Create a final copy of i
             String playerName = "Player " + (i + 1);
@@ -166,7 +115,7 @@ public class Game extends JFrame {
             JLabel scoreLabel = new JLabel("Score: 0 ");
             playerScoreLabels.add(scoreLabel);
             playerButton.addActionListener(e -> {
-            playerScoreLabels.add(scoreLabel); 
+            playerScoreLabels.add(scoreLabel);
             JLabel resourceLabel = new JLabel("Resources: " + players.get(finalI).getResources());
             playerScoreLabels.add(resourceLabel);
             JLabel tilesOwnedLabel = new JLabel("Tiles Owned: " + players.get(finalI).getTilesOwned().stream().map(Tile::getName).collect(Collectors.joining(", ")));
@@ -184,7 +133,7 @@ public class Game extends JFrame {
             frame.add(playerButton);
         }
 
-        
+
         seconds_left.setBounds(535,510,100,100);
         seconds_left.setBackground(new Color(25,25,25));
         seconds_left.setForeground(new Color(255,0,0));
@@ -207,59 +156,9 @@ public class Game extends JFrame {
         dice_button.setFocusable(false);
         dice_button.setEnabled(false);
         dice_button.setText("Roll Dice");
-        dice_button.addActionListener(e -> {
-            if (turnEnded) {
-                // Roll the dice and perform actions for the current player
-                int diceRoll = rollDice();
-                System.out.println(players.get(currentPlayer - 1).getName() + " rolled a " + diceRoll);
-
-                // Get the current player's position on the game board
-                int currentPosition = players.get(currentPlayer- 1).getPosition();
-
-                // Update the player's position by adding the dice roll
-                int newPosition = currentPosition + diceRoll;
-
-                // Check if the new position exceeds the maximum position on the game board
-                if (newPosition >= gameBoard.size()) {
-                    newPosition = newPosition % gameBoard.size();
-                    // Add resources to the player when they pass the start tile
-                    players.get(currentPlayer- 1).setResources(players.get(currentPlayer- 1).getResources() + 250); // Add 200 resources
-                    System.out.println(players.get(currentPlayer- 1).getName() + "'s resources increased to " + players.get(currentPlayer- 1).getResources());
-                }
-
-                players.get(currentPlayer - 1).setPosition(newPosition);
-                updateGameBoard();
-                // Find the tile corresponding to the new position
-                Tile currentTile = gameBoard.get(newPosition);
-
-                // Output the tile information
-                System.out.println(players.get(currentPlayer - 1).getName() + " landed on " + currentTile.getName() + " - " + currentTile.getType());
-
-                // Check if the current tile is a special tile
-                if (currentTile.getType() == TileType.SPECIAL) {
-                    // Increase the player's score by a certain amount
-                    players.get(currentPlayer- 1).increaseScore(10); // Increase the score by 10 (you can change the amount as needed)
-
-                    System.out.println(players.get(currentPlayer- 1).getName() + "'s score increased to " + players.get(currentPlayer- 1).getScore());
-                    // Update the player's score label
-                    playerScoreLabels.get(currentPlayer- 1).setText(" Score: " + players.get(currentPlayer- 1).getScore());
-
-                } else if (currentTile.getOwner() == null && currentTile.getType() != TileType.START && currentTile.getType() != TileType.SPECIAL) {
-                    // Ask the player if they want to buy the tile
-                    int response = JOptionPane.showConfirmDialog(null, "Do you want to buy tile " + currentTile.getPosition() + " for " + currentTile.getPrice() + " resources?", "Buy Tile", JOptionPane.YES_NO_OPTION);
-                    if (response == JOptionPane.YES_OPTION) {
-                        players.get(currentPlayer- 1).buyTile(currentTile);
-                         players.get(currentPlayer- 1).getTilesOwned().add(currentTile);
-                        System.out.println(players.get(currentPlayer- 1).getName() + " you have bought " + currentTile.getName() );
-                    }
-                }
-                dice_button.setEnabled(false);
-
-                turnEnded = false; // Set turnEnded to false to indicate that the current player's turn has not ended
-            } else {
-                System.out.println("End your turn before the next player can roll the dice.");
-            }
-        });
+        boolean turnEnded = true;
+        GameActions gameActions = new GameActions(players, playerScoreLabels, gameBoard, dice_button, dice, currentPlayer, turnEnded);
+            gameActions.performDiceRollAction();
         actionsButton.setBounds(125, 525, 200, 100); // Adjust these values as needed
         actionsButton.setFont(new Font("Times New Roman", Font.BOLD, 35));
         actionsButton.setFocusable(false);
@@ -444,7 +343,7 @@ if (!isTileOwned) {
             if (seconds <= 0) {
                 ((Timer)e.getSource()).stop();
                 System.out.print("Game over\n");
-                displayFinalState();
+                gameActions.displayFinalState();
             }
 
         });
@@ -462,23 +361,14 @@ if (!isTileOwned) {
             timer.start(); // Start the timer
             frame.remove(startGameButton);
             frame.add(endTurnButton);
-            
+
         });
 
         endTurnButton.setBounds(0, 500, 100, 110); // Adjust these values as needed
         endTurnButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
         endTurnButton.setFocusable(false);
         endTurnButton.setText("<html>End<br>Turn</html>");
-        endTurnButton.addActionListener(e -> {
-            seconds = 60;
-            seconds_left.setText(String.valueOf(seconds)); // Update the seconds_left label
-            timer.start(); // Start the timer
-            System.out.println(playerButtons.get(currentPlayer - 1).getText() + " has ended their turn");
-            turnEnded = true; // Set turnEnded to true to indicate that the current player's turn has ended
-            currentPlayer = (currentPlayer % players.size()) + 1; // Switch to the next player
-            dice_button.setEnabled(true);
-            
-        });
+       gameActions.addEndTurnButtonAction(endTurnButton);
 
         promptPlayerNames();
         frame.add(startGameButton);
@@ -491,61 +381,20 @@ if (!isTileOwned) {
         frame.setVisible(true);
     }
 
-    private String Uniquename(String playerLabel) {
-        String name;
-        do {
-            name = JOptionPane.showInputDialog(frame, "Enter new name for " + playerLabel);
-            if (name != null && name.trim().isEmpty()) {
-                // Name is empty, show a message
-                JOptionPane.showMessageDialog(frame, "Name cannot be empty. Please enter a different name.");
-            } else if (name != null && name.length() > 8) {
-                // Name is more than 8 characters long, show a message
-                JOptionPane.showMessageDialog(frame, "Name must be up to 8 characters long. Please enter a different name.");
-            } else if (usedNames.contains(name)) {
-                // Name is already used, show a message
-                JOptionPane.showMessageDialog(frame, "Name '" + name + "' is already in use. Please enter a different name.");
-            }
-        } while (name != null && (name.trim().isEmpty() || name.length() > 8 || usedNames.contains(name)));
-        if (name != null) {
-            usedNames.add(name);
-        }
-        return name;
-    }
-
-    private int rollDice() {
-        // Generate random numbers between 1 and 6 for two dice
-        int dice1 = (int) (Math.random() * 6) + 1;
-        int dice2 = (int) (Math.random() * 6) + 1;
-        // Calculate the sum of the two dice rolls
-        int sum = dice1 + dice2;
-
-        return sum;
-    }
-    private void promptPlayerNames() {
-        for (int i = 0; i < playerButtons.size(); i++) {
-            String newName = Uniquename(playerButtons.get(i).getText());
-            if (newName != null) {
-                players.get(i).setName(newName);
-                playerButtons.get(i).setText(newName);
-                System.out.print("Player " + (i + 1) + " has changed their name to " + newName + "\n");
-            }
-        }
-    }
-    private void displayFinalState() {
-        System.out.println("Final State of Play:");
-        for (Player player : players) {
-            System.out.println(player.getName() + " - Position: " + player.getPosition());
-            System.out.println("Score: " + player.getScore());
-            System.out.println("Resources: " + player.getResources());
-            System.out.println("Tiles Owned: " + player.getTilesOwned().stream().map(Tile::getName).collect(Collectors.joining(", ")));
-        }
-    }
-    private void updateGameBoard() {
-        for (int i = 0; i < tiles.size(); i++) {
-            tiles.get(i).setText(gameBoard.get(i).getName());
-            for (Player player : players) {
-                if (player.getPosition() == i) {
-                    tiles.get(i).setText(tiles.get(i).getText() + " " + player.getName());
+    public void promptPlayerNames() {
+        if (playerButtons != null && players != null) {
+            for (int i = 0; i < playerButtons.size(); i++) {
+                JButton button = playerButtons.get(i);
+                if (button != null) {
+                    String newName = GameActions.Uniquename(button.getText());
+                    if (newName != null) {
+                        Player player = players.get(i);
+                        if (player != null) {
+                            player.setName(newName);
+                            button.setText(newName);
+                            System.out.print("Player " + (i + 1) + " has changed their name to " + newName + "\n");
+                        }
+                    }
                 }
             }
         }
