@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.List;
 
 
-public class DiceButtons extends JButton {
+public class DiceButton extends JButton {
 
     private final List<Player> players;
     int currentPlayer = 1;
@@ -20,7 +20,7 @@ public class DiceButtons extends JButton {
     private final List<Tile> gameBoard;
 
 
-    public DiceButtons(List<Player> players, List<Tile> gameBoard, List<JLabel> playerScoreLabels,int currentPlayer) {
+    public DiceButton(List<Player> players, List<Tile> gameBoard, List<JLabel> playerScoreLabels,int currentPlayer) {
     this.players = players;
     this.gameBoard = gameBoard;
     this.playerScoreLabels = playerScoreLabels;

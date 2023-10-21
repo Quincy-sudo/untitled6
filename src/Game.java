@@ -3,9 +3,9 @@ import java.awt.*;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 
-import Buttons.DiceButtons;
+import Buttons.DiceButton;
+import Buttons.EndTurnButton;
 import Player.Player;
 import Tile.LoadTileTransaction;
 import Tile.Tile;
@@ -17,24 +17,17 @@ import java.util.Optional;
 
 public class Game extends JFrame {
 
-    Dice dice = new Dice();
     private final java.util.List<Tile> gameBoard;
-    private final int diceRoll = dice.roll();
     int currentPlayer = 1;
     private int seconds = 60;
-    boolean turnEnded = true;
     private final JFrame frame = new JFrame();
     private final JButton startGameButton = new JButton();
     private final List<Player> players = new ArrayList<>();
     private final List<JButton> playerButtons = new ArrayList<>();
     private final JButton actionsButton = new JButton();
-    private JButton dice_button = new JButton();
+    private final JButton dice_button = new JButton();
     private final JLabel seconds_left = new JLabel();
-    private final HashSet<String> usedNames = new HashSet<>();
-    private final JButton endTurnButton = new JButton();
     private final List<JLabel> playerScoreLabels = new ArrayList<>();
-    private final JPanel gameBoardPanel = new JPanel();
-    private final List<JButton> tiles = new ArrayList<>();
 
 
     // Custom OutputStream that appends text to the textfield
@@ -84,9 +77,9 @@ public class Game extends JFrame {
         JScrollPane scrollPane = new JScrollPane(textfield);
         scrollPane.setBounds(100, 100, 540, 400);
 
-        DiceButtons diceButtons = new DiceButtons(players, gameBoard, playerScoreLabels, currentPlayer);
-        frame.add(diceButtons);
-        diceButtons.setEnabled(false);
+        DiceButton diceButton = new DiceButton(players, gameBoard, playerScoreLabels, currentPlayer);
+        frame.add(diceButton);
+        diceButton.setEnabled(false);
 
         PrintStream printStream = new PrintStream(new TextAreaOutputStream(textfield, 20000));
         System.setOut(printStream);
@@ -202,14 +195,14 @@ public class Game extends JFrame {
                         break;
                     case "Trade Tile":
                         // Ask the player which tile they want to trade
-                        String tileToTrade = (String) JOptionPane.showInputDialog(
+                        String tileToTrade = JOptionPane.showInputDialog(
                                 frame,
                                 "Enter the name of the tile you want to trade:",
                                 "Tile Trading - " + currentPlayer,
                                 JOptionPane.QUESTION_MESSAGE
                         );
                         // Ask the player who they want to trade with
-                        String playerToTradeWith = (String) JOptionPane.showInputDialog(
+                        String playerToTradeWith = JOptionPane.showInputDialog(
                                 frame,
                                 "Enter the name of the player you want to trade with:",
                                 "Tile Trading - " + currentPlayer,
@@ -240,13 +233,13 @@ public class Game extends JFrame {
                         break;
                     case "Buy Tile from Player":
                         // Ask the player who they want to buy from
-                        String playerToBuyFrom = (String) JOptionPane.showInputDialog(
+                        String playerToBuyFrom = JOptionPane.showInputDialog(
                                 frame,
                                 "Enter the name of the player you want to buy from:",
                                 "Tile Buying - " + currentPlayer,
                                 JOptionPane.QUESTION_MESSAGE
                         );
-                        String tileToBuy = (String) JOptionPane.showInputDialog(
+                        String tileToBuy = JOptionPane.showInputDialog(
                                 frame,
                                 "Enter the name of the tile you want to buy:",
                                 "Tile Buying - " + currentPlayer,
@@ -293,7 +286,7 @@ public class Game extends JFrame {
                         // If the tile is not owned by any player
                         if (!isTileOwned) {
                             // Ask the player who they want to offer the tile to
-                            String playerToOfferTo = (String) JOptionPane.showInputDialog(
+                            String playerToOfferTo = JOptionPane.showInputDialog(
                                     frame,
                                     "Enter the name of the player you want to offer the tile to:",
                                     "Tile Offering - " + currentPlayer,
@@ -346,6 +339,7 @@ public class Game extends JFrame {
             }
 
         });
+        EndTurnButton endTurnButton = new EndTurnButton(playerButtons, players, currentPlayer, diceButton);
 
         startGameButton.setBounds(0, 500, 98, 110);// Adjust these values as needed
         startGameButton.setFont(new Font("Times New Roman", Font.BOLD, 20));
@@ -360,31 +354,17 @@ public class Game extends JFrame {
             timer.start(); // Start the timer
             frame.remove(startGameButton);
             frame.add(endTurnButton);
-            diceButtons.setEnabled(true);
+            frame.revalidate();
+            frame.repaint();
+            diceButton.setEnabled(true);
 
         });
-
-        endTurnButton.setBounds(0, 500, 100, 110); // Adjust these values as needed
-        endTurnButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
-        endTurnButton.setFocusable(false);
-        endTurnButton.setText("<html>End<br>Turn</html>");
-        endTurnButton.addActionListener(e -> {
-            seconds = 60;
-            seconds_left.setText(String.valueOf(seconds)); // Update the seconds_left label
-            timer.start(); // Start the timer
-            System.out.println(playerButtons.get(currentPlayer - 1).getText() + " has ended their turn");
-            turnEnded = true;
-            currentPlayer = ((currentPlayer) % players.size()) + 1; // Switch to the next player
-            diceButtons.setEnabled(true);
-        });
-
         promptPlayerNames();
         frame.add(startGameButton);
         frame.add(titleLabel);
         frame.add(scrollPane);
         frame.add(time_label);
         frame.add(seconds_left);
-        frame.add(dice_button);
         frame.add(actionsButton);
         frame.setVisible(true);
 

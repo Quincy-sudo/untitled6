@@ -29,6 +29,7 @@ public class GameActions {
         this.currentPlayer = currentPlayer;
         this.turnEnded = turnEnded;
         this.playerButtons = playerButtons; // Initialize playerButtons
+
     }
     public GameActions(List<Player> players, List<JLabel> playerScoreLabels, List<Tile> gameBoard, JButton diceButton, Dice dice, int currentPlayer, boolean turnEnded) {
         this.players = players;
