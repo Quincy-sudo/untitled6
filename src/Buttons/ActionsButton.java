@@ -18,12 +18,11 @@ public class ActionsButton extends JButton {
     int currentPlayer = 1;
     boolean turnEnded = true;
 
-    public ActionsButton(JFrame frame, List<JButton> playerButtons, List<Player> players, List<Tile> gameBoard, int currentPlayer) {
+    public ActionsButton(JFrame frame, List<JButton> playerButtons, List<Player> players, List<Tile> gameBoard) {
         this.frame = frame;
         this.playerButtons = playerButtons;
         this.players = players;
         this.gameBoard = gameBoard;
-        this.currentPlayer = currentPlayer;
         this.setBounds(125, 525, 200, 100); // Adjust these values as needed
         this.setFont(new Font("Times New Roman", Font.BOLD, 35));
         this.setFocusable(false);

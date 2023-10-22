@@ -10,48 +10,13 @@ import java.util.stream.Collectors;
 
 public class GameActions {
 
-    private final List<Player> players;
-    private final List<JLabel> playerScoreLabels;
-    private final List<Tile> gameBoard;
-    private final JButton dice_button;
-    private final Dice dice;
+    List<Player> players;
+
     private static final List<String> usedNames = new ArrayList<>(); // Add this line
     int currentPlayer = 1;
     private List<JButton> playerButtons;
     private boolean turnEnded = true;
 
-    public GameActions(List<Player> players, List<JLabel> playerScoreLabels, List<Tile> gameBoard, JButton dice_button, Dice dice, int currentPlayer, boolean turnEnded, List<JButton> playerButtons) {
-        this.players = players;
-        this.playerScoreLabels = playerScoreLabels;
-        this.gameBoard = gameBoard;
-        this.dice_button = dice_button;
-        this.dice = dice;
-        this.currentPlayer = currentPlayer;
-        this.turnEnded = turnEnded;
-        this.playerButtons = playerButtons; // Initialize playerButtons
-
-    }
-    public GameActions(List<Player> players, List<JLabel> playerScoreLabels, List<Tile> gameBoard, JButton diceButton, Dice dice, int currentPlayer, boolean turnEnded) {
-        this.players = players;
-        this.playerScoreLabels = playerScoreLabels;
-        this.gameBoard = gameBoard;
-        this.dice_button = diceButton;
-        this.dice = dice;
-        this.currentPlayer = currentPlayer;
-        this.turnEnded = turnEnded;
-    }
-   
-    public void addEndTurnButtonAction(JButton endTurnButton) {
-        endTurnButton.addActionListener(e -> {
-            // Increment currentPlayer or reset to 1 if it exceeds the number of players
-            System.out.println(currentPlayer + " has ended their turn");
-            // Set turnEnded to true to allow the next player to roll the dice
-            turnEnded = true;
-            currentPlayer = (currentPlayer % players.size()) + 1;
-            // Enable the dice_button for the next player's turn
-            dice_button.setEnabled(true);
-        });
-    }
     public void displayFinalState() {
         System.out.println("Final State of Play:");
         for (Player player : players) {

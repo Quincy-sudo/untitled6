@@ -330,15 +330,16 @@ public class Game extends JFrame {
         });
 */
 
-        DiceButton diceButton1 = new DiceButton(players, gameBoard, playerScoreLabels, currentPlayer);
-        frame.add(diceButton1);
-        diceButton1.setEnabled(false);
+        DiceButton diceButton = new DiceButton(players, gameBoard, playerScoreLabels, currentPlayer);
+        frame.add(diceButton);
+        diceButton.setEnabled(false);
 
-        ActionsButton actionsButton = new ActionsButton(frame, playerButtons, players, gameBoard, currentPlayer);
+        ActionsButton actionsButton = new ActionsButton(frame, playerButtons, players, gameBoard);
         frame.add(actionsButton);
 
-        EndTurnButton endTurnButton = new EndTurnButton(playerButtons, players, currentPlayer, diceButton1, seconds_left, timer, diceButton1, actionsButton);
-        StartGameButton StartGameButton = new StartGameButton(diceButton1, actionsButton, seconds_left, timer, frame, endTurnButton);
+        EndTurnButton endTurnButton = new EndTurnButton(playerButtons, players, currentPlayer, diceButton, seconds_left, timer, diceButton, actionsButton);
+
+        StartGameButton StartGameButton = new StartGameButton(diceButton, actionsButton, seconds_left, timer, frame, endTurnButton);
         frame.add(StartGameButton);
 
        /* startGameButton.setBounds(0,500,100,110);
