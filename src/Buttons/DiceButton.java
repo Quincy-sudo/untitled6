@@ -19,7 +19,6 @@ public class DiceButton extends JButton {
     private final List<JLabel> playerScoreLabels;
     private final List<Tile> gameBoard;
 
-
     public DiceButton(List<Player> players, List<Tile> gameBoard, List<JLabel> playerScoreLabels,int currentPlayer) {
     this.players = players;
     this.gameBoard = gameBoard;
@@ -82,10 +81,17 @@ public class DiceButton extends JButton {
           this.setEnabled(false);
 
           turnEnded = true; // Set turnEnded to false to indicate that the current player's turn has not ended
-          currentPlayer = ((currentPlayer) % players.size()) + 1; // Switch to the next player
+
       } else {
           System.out.println("End your turn before the next player can roll the dice.");
       }
   }
-  }
+    public void setTurnEnded(boolean turnEnded) {
+        this.turnEnded = turnEnded;
+    }
+
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+}
 
