@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.List;
 
 
-public class DiceButton extends JButton {
+public class DiceButton extends DefaultButton {
 
     private final List<Player> players;
     int currentPlayer = 1;
@@ -20,16 +20,13 @@ public class DiceButton extends JButton {
     private final List<Tile> gameBoard;
 
     public DiceButton(List<Player> players, List<Tile> gameBoard, List<JLabel> playerScoreLabels,int currentPlayer) {
-    this.players = players;
+        super("Roll Dice");
+        this.players = players;
     this.gameBoard = gameBoard;
     this.playerScoreLabels = playerScoreLabels;
     this.dice = new Dice();
     this.currentPlayer = currentPlayer;
     this.setBounds(335,525,200,100);
-    this.setFont(new Font("Times New Roman",Font.BOLD,35));
-    this.setFocusable(false);
-    this.setEnabled(true);
-    this.setText("Roll Dice");
     this.addActionListener(e -> performDiceRollAction());
 }
 

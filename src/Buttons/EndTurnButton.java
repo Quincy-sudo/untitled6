@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-public class EndTurnButton extends JButton {
+public class EndTurnButton extends DefaultButton {
     private List<Player> players;
     int currentPlayer = 1;
     boolean turnEnded = true;
@@ -27,6 +27,7 @@ public class EndTurnButton extends JButton {
     }
 
     public EndTurnButton(List<JButton> playerButtons, List<Player> players, int currentPlayer, JButton diceButton, JLabel seconds_left, Timer timer, DiceButton diceButton_Player,ActionsButton actionsButton) {
+        super("<html>End<br>Turn</html>");
         this.players = players;
         this.timer = timer;
         this.playerButtons = playerButtons;
@@ -35,10 +36,9 @@ public class EndTurnButton extends JButton {
         this.diceButton = diceButton;
         this.seconds_left = seconds_left;
         this.actionsButton = actionsButton;
+        this.setEnabled(true);
+        this.setFont(new Font("Times New Roman", Font.BOLD, 20));
         this.setBounds(0, 500, 100, 110); // Set the position and size
-        this.setFont(new Font("Times New Roman", Font.BOLD, 15)); // Set the font
-        this.setFocusable(false); // Set the focusable property
-        this.setText("<html>End<br>Turn</html>"); // Set the text
         this.addActionListener(e -> EndTurn());
     }
 

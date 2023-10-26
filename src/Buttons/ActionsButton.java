@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Optional;
 
-public class ActionsButton extends JButton {
+public class ActionsButton extends DefaultButton {
     final JFrame frame;
     final List<JButton> playerButtons;
     final List<Player> players;
@@ -19,15 +19,12 @@ public class ActionsButton extends JButton {
     boolean turnEnded = true;
 
     public ActionsButton(JFrame frame, List<JButton> playerButtons, List<Player> players, List<Tile> gameBoard) {
+        super("Actions");
         this.frame = frame;
         this.playerButtons = playerButtons;
         this.players = players;
         this.gameBoard = gameBoard;
         this.setBounds(125, 525, 200, 100); // Adjust these values as needed
-        this.setFont(new Font("Times New Roman", Font.BOLD, 35));
-        this.setFocusable(false);
-        this.setEnabled(false);
-        this.setText("Actions");
         this.addActionListener(e -> {
             String[] options = {"Buy Tile", "Trade Tile", "Buy Tile from Player", "Offer Current Tile", "Option 5"};
             String selectedOption = (String) JOptionPane.showInputDialog(
